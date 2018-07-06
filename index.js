@@ -1,46 +1,26 @@
-(function(KMZGeoJSON) {
-  KMZGeoJSON.version = '0.1.0';
+const togeojson = require('togeojson');
+const unzip = require('unzip2');
+const xmldom = new (require('xmldom')).DOMParser();
+const through2 = require('through2');
 
-  // Allow user to specify default parameters
-  KMZGeoJSON.defaults = {};
+function toKML(stream) {
+  return stream.pipe(unzip.Parse());
+}
 
-  var request = require("request"),
-    togeojson = require('togeojson'),
-    unzip = require('unzip2'),
-    xmldom = new (require('xmldom').DOMParser)();
-
-  KMZGeoJSON.toKML = function(path, callback) {
-    request( path )
-    .pipe(unzip.Parse())
-    .on('entry', function ( entry ) {
-      var fileName = entry.path;
-      var type = entry.type; // 'Directory' or 'File' 
-      if (fileName.indexOf('.kml') === -1) {
-        entry.autodrain();
-        return;
+function toGeoJSON(stream) {
+  return toKML(stream).pipe(
+    through2.obj((kml, _, cb) => {
+      try {
+        const geoJson = togeojson.kml(xmldom.parseFromString(kml));
+        cb(undefined, geoJson);
+      } catch (e) {
+        cb(e);
       }
-      
-      var data = '';
-      entry.on('error', function(err) {
-        callback(err);
-      });
-
-      entry.on('data', function(chunk) {
-        data += chunk;
-      });
-
-      entry.on('end', function() {
-        callback(null, data);
-      });
     })
-    .on('error', callback);
-  };
+  );
+}
 
-  KMZGeoJSON.toGeoJSON = function(path, callback) {
-    KMZGeoJSON.toKML(path, function(error, kml) {
-      var geojson = togeojson.kml(xmldom.parseFromString(kml));
-      callback(null, geojson);
-    });
-  };
-
-}(typeof module == 'object' ? module.exports : window.KMZGeoJSON = {}));
+module.exports = {
+  toKML,
+  toGeoJSON
+};

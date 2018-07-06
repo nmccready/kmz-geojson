@@ -1,29 +1,37 @@
 {
-  "name": "kmz-geojson",
+  "name": "kmz-to-geo",
   "version": "0.1.0",
   "description": "Convert KMZ to GeoJSON",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "mocha test ./tests/**/*test.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sntran/kmz-geojson"
+    "url": "https://github.com/nmccready/kmz-to-geo"
   },
   "keywords": [
     "kmz",
     "geojson"
   ],
-  "author": "Son Tran-Nguyen <son@sntran.com>",
+  "author": "Nick McCready <nemtcan@gmail.com>",
+  "originalAuthor": "Son Tran-Nguyen <son@sntran.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sntran/kmz-geojson/issues"
+    "url": "https://github.com/nmccready/kmz-to-geo/issues"
   },
-  "homepage": "https://github.com/sntran/kmz-geojson",
+  "homepage": "https://github.com/nmccready/kmz-to-geo",
   "dependencies": {
-    "request": "^2.58.0",
+    "through2": "^2.0.3",
     "togeojson": "^0.12.1",
     "unzip2": "^0.2.5",
     "xmldom": "^0.1.19"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "del": "^3.0.0",
+    "fstream": "^1.0.11",
+    "glob": "^7.1.2",
+    "mocha": "^5.2.0"
   }
 }
