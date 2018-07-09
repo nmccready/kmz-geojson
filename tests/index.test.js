@@ -9,24 +9,53 @@ const { toGeoJSON, toKML } = require('..');
 const { name } = require('../package.json');
 
 const outPath = path.join(__dirname, 'out');
+const debug = require('../debug').spawn('test');
+
+const writeFileTransform = () => through2.obj((entry, e, cb) => {
+  debug(() => entry.path);
+  entry
+    .pipe(fs.createWriteStream(path.join(outPath, entry.path)))
+    .once('finish', cb);
+});
 
 describe(name, () => {
   beforeEach(() => del(path.join(__dirname, 'out', '*.kml')));
 
-  it('unzip at least 1 kml file', done => {
-    const inputStream = fs.createReadStream(
-      path.join(__dirname, 'fixtures', 'bigKml.kmz')
-    );
+  describe('toKML', () => {
+    it('unzip at least 1 kml file', done => {
+      const inputStream = fs.createReadStream(
+        path.join(__dirname, 'fixtures', 'bigKml.kmz')
+      );
 
-    toKML(inputStream)
-      .pipe(fstream.Writer(outPath))
-      .once('error', e => done(e))
-      .once('close', () => {
-        glob(path.join(outPath, '*.kml'), (er, files) => {
-          if (er) done(er);
-          expect(files.length).to.be.ok;
-          done();
+      toKML(inputStream)
+        .pipe(writeFileTransform())
+        .once('error', e => done(e))
+        .once('finish', () => {
+          glob(path.join(outPath, '*.kml'), (er, files) => {
+            if (er) done(er);
+            expect(files.length).to.be.ok;
+            done();
+          });
         });
-      });
+    });
+  });
+
+  describe('toGeoJSON', () => {
+    it('kmz to geo JSON', done => {
+      const inputStream = fs.createReadStream(
+        path.join(__dirname, 'fixtures', 'bigKml.kmz')
+      );
+
+      toGeoJSON(inputStream)
+      .pipe(writeFileTransform())
+        .once('error', e => done(e))
+        .once('finish', () => {
+          glob(path.join(outPath, '*.json'), (er, files) => {
+            if (er) done(er);
+            expect(files.length).to.be.ok;
+            done();
+          });
+        });
+    });
   });
 });

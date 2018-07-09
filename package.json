@@ -24,11 +24,13 @@
   "dependencies": {
     "through2": "^2.0.3",
     "togeojson": "^0.12.1",
+    "unzip-stream": "^0.3.0",
     "unzip2": "^0.2.5",
     "xmldom": "^0.1.19"
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "debug-fabulous": "^1.1.0",
     "del": "^3.0.0",
     "fstream": "^1.0.11",
     "glob": "^7.1.2",
