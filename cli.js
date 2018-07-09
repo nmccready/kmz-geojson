@@ -13,7 +13,7 @@ const debug = require('./debug').spawn('cli');
 commander
   .version(version)
   .usage('cat ./tests/fixtures/bigKml.kmz | kmz-to-geo some-dir')
-  .usage('kmz-to-geo ./tests/fixtures/bigKml.kmz some-dir')
+  .usage('./tests/fixtures/bigKml.kmz some-dir')
   .arguments('<writePath|readPath> [writePath]')
   .action(function(readPath, writePath) {
     debug(() => ({ readPath, writePath }));
@@ -34,8 +34,8 @@ let inStream = fileToRead ? fs.createReadStream(fileToRead) : process.stdin;
 
 if (commander.unzip) {
   stream = toKML(inStream);
+} else {
+  stream = toGeoJSON(inStream);
 }
-
-stream = toGeoJSON(inStream);
 
 stream.pipe(writeFileTransform(somePathToWriteTo));
