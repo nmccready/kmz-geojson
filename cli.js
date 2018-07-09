@@ -20,9 +20,9 @@ commander
     if (!writePath) {
       writePath = readPath;
     } else {
-      fileToRead = path.join(__dirname, readPath);
+      fileToRead = path.join(readPath);
     }
-    somePathToWriteTo = path.join(__dirname, writePath);
+    somePathToWriteTo = path.join(writePath);
 
     debug(() => ({ somePathToWriteTo }));
   })
