@@ -2,6 +2,7 @@
   "name": "kmz-to-geo",
   "version": "0.1.0",
   "description": "Convert KMZ to GeoJSON",
+  "bin": "./bin/kmz-to-geo",
   "main": "index.js",
   "scripts": {
     "test": "mocha test ./tests/**/*test.js"

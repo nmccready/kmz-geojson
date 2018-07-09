@@ -4,8 +4,11 @@ const Entry = require('unzip-stream/lib/entry');
 const xmldom = new (require('xmldom')).DOMParser();
 const through2 = require('through2');
 const { collect } = require('fstream');
+const path = require('path');
+const fs = require('fs');
 
-const jsonDebug = require('./debug').spawn('toGeoJSON');
+const debug = require('./debug');
+const jsonDebug = debug.spawn('toGeoJSON');
 
 function toKML(stream) {
   return stream.pipe(unzip.Parse());
@@ -61,7 +64,15 @@ function toGeoJSON(stream) {
   return toKML(stream).pipe(through2.obj(transRoot));
 }
 
+const writeFileTransform = (outPath) => through2.obj((entry, e, cb) => {
+  debug(() => entry.path);
+  entry
+    .pipe(fs.createWriteStream(path.join(outPath, entry.path)))
+    .once('finish', cb);
+});
+
 module.exports = {
   toKML,
-  toGeoJSON
+  toGeoJSON,
+  writeFileTransform
 };
